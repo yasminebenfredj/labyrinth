@@ -24,39 +24,134 @@ var listOfPlayers = {};
 
 let playerSpeed = 100;
 let obstacleSpeed = 100;
-let obstacles = [];
-let laves = [] ;
+let obstacles, laves ;
 
 let target = {x:700, y:200, radius:30, color:'yellow'};
 
+function createObstacles(level) {
+	let o1,o2,o3,o4,o5,o6,o7,o8,o9,o10,o11,o12,o13,o14, l1, l2;
+	obstacles = [];
+	laves = [];
+	switch(level) {
+		case 1 :
+			o1 = new Obstacle(150, 50, 20, 100, "red", obstacleSpeed, 100, 250, 40);
+			o2 = new Obstacle(600, 50, 20, 50, "orange", obstacleSpeed, 100, 250, 40)
+		  
+			o3 = new Obstacle( 150, 250, 20, 600, "white", 0, 100, 0, 0)
+			o4 = new Obstacle( 150, 0, 20, 100, "white", 0, 100, 0, 0)
+		  
+			o5 = new Obstacle(300, 300, 20, 500, "white", 0, 100, 0 , 0)
+			o6 = new Obstacle(300, 0, 20, 200, "white", 0, 100, 0, 0)
+		  
+			o7 =  new Obstacle(450, 100, 20, 500, "white", 0, 100, 0, 0)
+			o8 =  new Obstacle(450, 0, 20, 10, "white", 0, 100, 0, 0)
+		  
+			o9 =  new Obstacle(600, 300, 20, 300, "white", 0, 100, 0, 0)
+			o10 = new Obstacle(600, 0, 20, 200, "white", 0, 100, 0, 0)
 
-function createObstacles() {
-	let o1 = new Obstacle(150, 50, 20, 100, "red", obstacleSpeed, 100);
-	let o2 = new Obstacle(600, 50, 20, 50, "orange", obstacleSpeed, 100)
-  
-	let o3 = new Obstacle( 150, 250, 20, 600, "white", 0, 100)
-	let o4 = new Obstacle( 150, 0, 20, 100, "white", 0, 100)
-  
-	let o5 = new Obstacle(300, 300, 20, 500, "white", 0, 100)
-	let o6 = new Obstacle(300, 0, 20, 200, "white", 0, 100)
-  
-	let o7 =  new Obstacle(450, 100, 20, 500, "white", 0, 100)
-	let o8 =  new Obstacle(450, 0, 20, 10, "white", 0, 100)
-  
-	let o9 =  new Obstacle(600, 300, 20, 300, "white", 0, 100)
-	let o10 = new Obstacle(600, 0, 20, 200, "white", 0, 100)
-  
-  
-	laves.push(o1);
-	laves.push(o2);
-	obstacles.push(o3);
-	obstacles.push(o4);
-	obstacles.push(o5);
-	obstacles.push(o6);
-	obstacles.push(o7);
-	obstacles.push(o8);
-	obstacles.push(o9);
-	obstacles.push(o10);
+			laves.push(o1);
+			laves.push(o2);
+			obstacles.push(o3);
+			obstacles.push(o4);
+			obstacles.push(o5);
+			obstacles.push(o6);
+			obstacles.push(o7);
+			obstacles.push(o8);
+			obstacles.push(o9);
+			obstacles.push(o10);
+			break;
+		case 2 :
+				
+			o1 = new Obstacle(100, 50, 20, 100, "red", obstacleSpeed, 100, 250, 40);
+			o2 = new Obstacle(600, 50, 20, 50, "orange", obstacleSpeed, 100, 250, 40);
+
+			l1 = new Obstacle(300, 50, 20, 100, "red", obstacleSpeed, 100, 250, 50);
+			l2 = new Obstacle(500, 50, 20, 50, "orange", obstacleSpeed, 100, 250, 30);
+			  
+			  
+			o3 = new Obstacle( 100, 250, 20, 600, "white", 0, 100, 0, 0)
+			o4 = new Obstacle( 100, 0, 20, 100, "white", 0, 100)
+			  
+			o5 = new Obstacle(200, 300, 20, 500, "white", 0, 100, 0, 0)
+			o6 = new Obstacle(200, 0, 20, 200, "white", 0, 100, 0, 0)
+			  
+			o7 =  new Obstacle(300, 100, 20, 500, "white", 0, 100, 0, 0)
+			o8 =  new Obstacle(300, 0, 20, 10, "white", 0, 100, 0, 0)
+			  
+			o9 =  new Obstacle(400, 300, 20, 300, "white", 0, 100, 0, 0)
+			o10 = new Obstacle(400, 0, 20, 200, "white", 0, 100, 0, 0)
+
+			o11 =  new Obstacle(500, 100, 20, 500, "white", 0, 100, 0, 0)
+			o12 = new Obstacle(500, 0, 20,10, "white", 0, 100, 0, 0)
+
+			o13 = new Obstacle(600, 350, 20, 500, "white", 0, 100, 0, 0)
+			o14 = new Obstacle(600, 0, 20, 200, "white", 0, 100, 0, 0)
+
+			laves.push(o1);
+			laves.push(o2);
+			laves.push(l1);
+			laves.push(l2);
+			obstacles.push(o3);
+			obstacles.push(o4);
+			obstacles.push(o5);
+			obstacles.push(o6);
+			obstacles.push(o7);
+			obstacles.push(o8);
+			obstacles.push(o9);
+			obstacles.push(o10);
+			obstacles.push(o11);
+			obstacles.push(o12);
+			obstacles.push(o13);
+			obstacles.push(o14);
+			
+			break;
+		case 3 :
+			o1 = new Obstacle(100, 50, 20, 100, "red", obstacleSpeed, 100, 100, 250)
+			o2 = new Obstacle(600, 50, 20, 50, "orange", obstacleSpeed, 100, 100, 300)
+
+			l1 = new Obstacle(300, 50, 20, 100, "red", obstacleSpeed, 100, 0, 250)
+			l2 = new Obstacle(500, 50, 20, 50, "orange", obstacleSpeed, 100, 0, 300)
+			  
+			  
+			o3 = new Obstacle( 100, 250, 20, 600, "white", 0, 100, 0, 0)
+			o4 = new Obstacle( 100, 0, 20, 100, "white", 0, 100)
+			  
+			o5 = new Obstacle(200, 300, 20, 500, "white", 0, 100, 0, 0)
+			o6 = new Obstacle(200, 0, 20, 200, "white", 0, 100, 0, 0)
+			  
+			o7 =  new Obstacle(300, 100, 20, 500, "white", 0, 100, 0, 0)
+			o8 =  new Obstacle(300, 0, 20, 10, "white", 0, 100, 0, 0)
+			  
+			o9 =  new Obstacle(400, 300, 20, 300, "white", 0, 100, 0, 0)
+			o10 = new Obstacle(400, 0, 20, 200, "white", 0, 100, 0, 0)
+
+			o11 =  new Obstacle(500, 100, 20, 500, "white", 0, 100, 0, 0)
+			o12 = new Obstacle(500, 0, 20,10, "white", 0, 100, 0, 0)
+
+			o13 = new Obstacle(600, 350, 20, 500, "white", 0, 100, 0, 0)
+			o14 = new Obstacle(600, 0, 20, 200, "white", 0, 100, 0, 0)
+
+			laves.push(o1);
+			laves.push(o2);
+			laves.push(l1);
+			laves.push(l2);
+			obstacles.push(o3);
+			obstacles.push(o4);
+			obstacles.push(o5);
+			obstacles.push(o6);
+			obstacles.push(o7);
+			obstacles.push(o8);
+			obstacles.push(o9);
+			obstacles.push(o10);
+			obstacles.push(o11);
+			obstacles.push(o12);
+			obstacles.push(o13);
+			obstacles.push(o14);
+			break;
+
+	}
+
+
   
   }
 
@@ -81,8 +176,8 @@ io.on('connection', (socket) => {
 		socket.emit("data", currentTime, timeElapsedSincePing, serverTimeElapsedSinceClientConnected);
 	});
 
-	socket.on('getObstaclesAndTarget', () =>{
-		createObstacles();
+	socket.on('getObstaclesAndTarget', (level) =>{
+		createObstacles(level);
 		socket.emit("updateObstacleAndTarget",obstacles,laves, target);
 	})
 
@@ -204,7 +299,9 @@ class Joueur {
 	  vx;
 	  vy;
 	  range;
-	  constructor( x, y, l, h, c, vy, range){
+	  max;
+	  min;
+	  constructor( x, y, l, h, c, vy, range, max, min){
 		this.color = c;
 		this.x = x;
 		this.y = y;
@@ -212,6 +309,8 @@ class Joueur {
 		this.height= h;
 		this.vy = vy;
 		this.range = range;
+		this.max = max ;
+		this.min = min;
 
 	  }
 

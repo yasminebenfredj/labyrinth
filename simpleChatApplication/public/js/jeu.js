@@ -96,7 +96,7 @@ function updatePlayerNewPos(newPos) {
 }
 
 function createObstaclesAndTarget() {
-  socket.emit("getObstaclesAndTarget");
+  socket.emit("getObstaclesAndTarget", level);
 }
 
 function updateObstaclesAndTarget(obstacle, lave, t) {
@@ -191,6 +191,8 @@ function checkIfPlayerHitTarget(player) {
     updateUsers(playernames,allPlayers);
     level = level +1 ;
     updatelevel();
+    createObstaclesAndTarget();
+
   } else {
     target.color = "yellow";
   }
@@ -249,10 +251,6 @@ function drawObstacles() {
     ctx.fillStyle = o.color;
     ctx.fillRect(o.x, o.y, o.width, o.height);
 
-    o.y += calcDistanceToMove(delta,o.vy);
-    if(o.y > 250) o.vy = -o.vy;
-    if(o.y <40) o.vy = -o.vy;
-
   });
 
   laves.forEach(o => {
@@ -262,13 +260,13 @@ function drawObstacles() {
 
     o.y += calcDistanceToMove(delta,o.vy);
 
-    if(o.y > 250) {
-      o.y = 249;
+    if(o.y > o.max) {
+      o.y = o.max-1;
       o.vy = -o.vy;
     } 
 
-    if(o.y <40) {
-      o.y = 41;
+    if(o.y <o.min) {
+      o.y = o.min+1;
       o.vy = -o.vy;
     }
 
