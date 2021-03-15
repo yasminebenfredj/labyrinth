@@ -1,0 +1,37 @@
+#myCanvas {
+    border: 3px solid white;
+    background-color:rgb(179, 163, 163);
+    border-radius: 2%;
+  }
+
+  .userList {
+    float:left;
+    width:100px;
+    height:300px;
+    border-right:5px solid white;
+    padding:10px;
+    overflow:scroll-y;
+    position: absolute;
+    top: 10px;
+    right: 360px;
+  }
+
+  .chatMessages {
+    float:left;
+    width:300px;
+    height:250px;
+    overflow:scroll-y;
+    padding:10px;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  .level {
+    float:left;
+    position: absolute;
+    padding:40px;
+    top: 10px;
+    right: 800px;
+    color: #d400ff;
+  }
