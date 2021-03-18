@@ -1,7 +1,8 @@
 #myCanvas {
-    border: 3px solid white;
-    background-color:rgb(179, 163, 163);
-    border-radius: 2%;
+    border: 5px solid white;
+    background-color:rgb(155, 131, 131);
+    border-radius: 1%;
+
   }
 
   .userList {
@@ -14,6 +15,8 @@
     position: absolute;
     top: 10px;
     right: 360px;
+    text-align: center;
+
   }
 
   .chatMessages {
@@ -32,6 +35,19 @@
     position: absolute;
     padding:40px;
     top: 10px;
-    right: 800px;
-    color: #d400ff;
+    right: 1100px;
+    color: #f2ff00;
+    text-align: center;
+
+  }
+
+  .info {
+    width:300px;
+    height:200px;
+    border-right:2px solid white;
+    border-left:2px solid white;
+    border-top:2px solid white;
+    border-bottom:2px solid white;
+    text-align: center;
+
   }

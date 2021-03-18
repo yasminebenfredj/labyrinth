@@ -70,23 +70,37 @@ function init() {
   });
 
   // just one player moved
-  socket.on("updatepos", (username, newPos) => {
+  socket.on("updatepos", ( newPos) => {
     updatePlayerNewPos(newPos);
   });
 
   // listener, whenever the server emits 'updateusers', this updates the username list
   socket.on("updateusers", ( playerNames,listOfPlayers) => {
-    updateUsers(playerNames,listOfPlayers);
+    updatePlayers(listOfPlayers);
+    updateUsersScore(playerNames);
   });
 
-    // Latency, ping etc.
-    socket.on("ping", () => {
-      send("pongo");
-    });
-
-  socket.on("updatelevel", () => {
-    updatelevel();
+  socket.on("updateLevel", (level) => {
+    updatelevel(level);
   });
+
+
+
+  
+  socket.on("endOfGame", (winner) => {
+    alert("Le jeu est terminer. Le gagnant est "+winner.name+" : "+winner.score+"pts. ");
+    /*
+    if(confirm("Voulez vous rejouez ? "){
+      startGame();
+    }
+    */
+  });
+
+  // Latency, ping etc.
+  socket.on("ping", () => {
+    send("pongo");
+  });
+
 
   // update the whole list of players, useful when a player
   // connects or disconnects, we must update the whole list
@@ -132,3 +146,7 @@ function changeArtificialLatency(value) {
   let spanDelayValue = document.querySelector("#delay");
   spanDelayValue.innerHTML = artificialLatencyDelay;
 }
+
+
+
+
