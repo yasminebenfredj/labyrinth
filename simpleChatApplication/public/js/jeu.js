@@ -62,6 +62,8 @@ function moveCurrentPlayer() {
     allPlayers[username].x += calcDistanceToMove(delta, allPlayers[username].vitesseX);
     allPlayers[username].y += calcDistanceToMove(delta,allPlayers[username].vitesseY);
 
+
+    //deplacer le transfert  dans > ligne 288 
     socket.emit("sendpos", allPlayers[username], delta);
   }
 }
@@ -181,6 +183,10 @@ function checkIfPlayerHitTarget(player) {
 
   if(circRectsOverlap(player.x, player.y, player.sizeX/2, player.sizeY/2, target.x/2, target.y/2, target.radius/2)) {
     target.color = "red";
+    for (let player in playernames) {
+			allPlayers[player].x=10;
+			allPlayers[player].y=10;
+		}
     socket.emit("playerHitTarget",player.name);
   } else {
     target.color = "yellow";
@@ -280,15 +286,22 @@ function processKeydown(event) {
   switch (event.key) {
     case "ArrowRight":
       allPlayers[username].vitesseX = playerSpeed;
+      socket.emit("pressKey", 0, username);
       break;
     case "ArrowLeft":
       allPlayers[username].vitesseX = -playerSpeed;
+      socket.emit("pressKey", 1, username);
+
       break;
     case "ArrowUp":
       allPlayers[username].vitesseY = -playerSpeed;
+      socket.emit("pressKey", 2, username);
+
       break;
     case "ArrowDown":
       allPlayers[username].vitesseY = playerSpeed;
+      socket.emit("pressKey", 3, username);
+
       break;
   }
 }

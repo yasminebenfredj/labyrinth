@@ -18,6 +18,9 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
 
+
+
+
 // nom des joueurs connectés sur le chat
 var playerNames = {};
 var listOfPlayers = {};
@@ -44,7 +47,238 @@ function winner(name){
 	return win;
 }
 
-function createObstacles() {
+
+
+  var calcDistanceToMove = function(delta, speed) {
+	return (speed * delta);
+  }
+
+io.on('connection', (socket) => {
+	let emitStamp;
+	let connectionStamp = Date.now();
+
+	setInterval(()=> {
+		emitStamp = Date.now();
+		socket.emit("ping");
+	}, 500);
+
+	socket.on('pongo', () => {
+		let currentTime = Date.now();
+		let timeElapsedSincePing = currentTime - emitStamp;
+		let serverTimeElapsedSinceClientConnected = currentTime - connectionStamp;
+
+		socket.emit("data", currentTime, timeElapsedSincePing, serverTimeElapsedSinceClientConnected);
+	});
+
+	socket.on('playerHitObstacle', (playerName) => {
+		listOfPlayers[playerName].x = listOfPlayers[playerName].x - 5;
+		io.emit('updateusers', playerNames,listOfPlayers);
+
+	});
+
+	socket.on('playerHitLave', (playerName) => {
+		listOfPlayers[playerName].x = listOfPlayers[playerName].x - 5;
+		listOfPlayers[playerName].score= listOfPlayers[playerName].score - 1;
+		io.emit('updateusers', playerNames,listOfPlayers);
+
+	});
+
+	socket.on('playerHitTarget', (playerName) => {
+
+		for (let player in playerNames) {
+			listOfPlayers[player].x=10;
+			listOfPlayers[player].y=10;
+		}
+
+		listOfPlayers[playerName].score= listOfPlayers[playerName].score + 10;
+		level = level +1 ;
+		io.emit('updateusers', playerNames,listOfPlayers);
+		socket.broadcast.emit('updateusers', playerNames,listOfPlayers);
+
+		if(level>3){ 
+			io.emit('endOfGame',winner(playerName));
+		}else {
+			io.emit('updateLevel', level);
+		}
+	});
+
+	socket.on("getLevel",() => {
+		io.emit('updateLevel', level);
+	});
+
+	socket.on("pressKey",(sens,player, delta) => {
+		switch(sens) {
+			case 0 :
+				listOfPlayers[player].vitesseX = playerSpeed;
+				break;
+			case 1 :
+				listOfPlayers[player].vitesseX = -playerSpeed;
+				break;
+			case 2 :
+				listOfPlayers[player].vitesseY = -playerSpeed;
+				break;			
+			case 3 :
+				listOfPlayers[player].vitesseY = playerSpeed;
+				break;
+		}
+	})
+
+
+
+	socket.on('getObstaclesAndTarget', () =>{
+		createObstacles();
+		socket.emit("updateObstacleAndTarget",obstacles,laves, target);
+	})
+
+	// when the client emits 'sendchat', this listens and executes
+	socket.on('sendchat', (data) => {
+		// we tell the client to execute 'updatechat' with 2 parameters
+		io.sockets.emit('updatechat', socket.username, data);
+	});
+
+	socket.on('sendpos', (player, delta) => {
+		let username = player.name;
+
+
+		if (listOfPlayers[username] !== undefined) {
+			listOfPlayers[player.name].vitesseX = player.vitesseX;
+			listOfPlayers[player.name].vitesseY = player.vitesseY;
+
+			listOfPlayers[username].x += calcDistanceToMove(delta, listOfPlayers[username].vitesseX);
+			listOfPlayers[username].y += calcDistanceToMove(delta,listOfPlayers[username].vitesseY);
+			let pos = {player: listOfPlayers[username] };
+
+			socket.broadcast.emit('updatepos', pos);
+			socket.broadcast.emit('updatePlayers',listOfPlayers);
+
+		}
+	});
+
+	socket.on("updatePlayers",() => {
+		io.emit('updatePlayers',listOfPlayers);
+	});
+
+	socket.on('adduser', (username) => {
+		socket.username = username;
+		playerNames[username] = username;
+		// echo to the current client that he is connected
+		socket.emit('updatechat', 'SERVER', 'you have connected');
+		// echo to all client except current, that a new person has connected
+		socket.broadcast.emit('updatechat', 'SERVER', username + ' has connected');
+
+		// Create a new player 
+		let player = new Joueur(username);
+		listOfPlayers[username] = player;
+
+		// tell all clients to update the list of users on the GUI
+		io.emit('updateusers', playerNames,listOfPlayers);
+	});
+
+	// when the user disconnects.. perform this
+	socket.on('disconnect', () => {
+		// remove the username from global usernames list
+		delete playerNames[socket.username];
+		// update list of users in chat, client-side
+
+		// Remove the player too
+		delete listOfPlayers[socket.username];	
+		
+		io.emit('updateusers', playerNames,listOfPlayers);
+		io.emit('updatePlayers',listOfPlayers);
+
+		// echo globally that this client has left
+		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
+	});
+});
+
+
+class Joueur {
+	name;
+	x;
+	y;
+	largeur = 100;
+	hauteur = 100;
+
+	vitesseX;
+	vitesseY;
+
+	color;
+	score;
+
+	sizeX;
+	sizeY;
+  
+	constructor( name) {
+	  this.x = 10;
+	  this.y =  Math.floor(Math.random() * (41 )) + 10;
+	  this.vitesseX=1;
+	  this.vitesseY=1;
+	  let r = Math.floor(Math.random() * (255 - 0 +1 )) + 0;
+	  let g = Math.floor(Math.random() * (255 - 0 +1 )) + 0;
+	  let b = Math.floor(Math.random() * (255 - 0 +1 )) + 0;
+	  this.color = [r,g,b];
+	  this.name = name;
+	  this.score = 0;
+	  this.sizeX = 20;
+	  this.sizeY = 20;
+	}
+	
+	changeDirection() {
+	  this.vitesseX = -this.vitesseX;
+	}
+	move() {
+	  this.x+=this.vitesseX;
+	}
+  }
+
+  class Obstacle {
+	  color;
+	  x;
+	  y;
+	  width;
+	  height;
+	  vx;
+	  vy;
+	  range;
+	  max;
+	  min;
+	  constructor( x, y, l, h, c, vy, range, max, min){
+		this.color = c;
+		this.x = x;
+		this.y = y;
+		this.width= l;
+		this.height= h;
+		this.vy = vy;
+		this.range = range;
+		this.max = max ;
+		this.min = min;
+
+	  }
+
+  }
+
+  class World {
+	allPlayers;
+	obtacles;
+	laves;
+	level;
+	names;
+
+
+	constructor (allPlayers, obstacles, laves, level, names) {
+		this.allPlayers = allPlayers;
+		this.obstacles = obstacles;
+		this.laves  = laves ;
+		this.level = level;
+		this.names = names;
+
+	}
+  }
+
+
+
+
+  function createObstacles() {
 	let o1,o2,o3,o4,o5,o6,o7,o8,o9,o10,o11,o12;
 	let l1, l2,l3, l4, l5, l6, l7;
 	obstacles = [];
@@ -179,207 +413,4 @@ function createObstacles() {
 			break;
 	}
   
-  }
-
-  var calcDistanceToMove = function(delta, speed) {
-	return (speed * delta);
-  }
-
-io.on('connection', (socket) => {
-	let emitStamp;
-	let connectionStamp = Date.now();
-
-	setInterval(()=> {
-		emitStamp = Date.now();
-		socket.emit("ping");
-	}, 500);
-
-	socket.on('pongo', () => {
-		let currentTime = Date.now();
-		let timeElapsedSincePing = currentTime - emitStamp;
-		let serverTimeElapsedSinceClientConnected = currentTime - connectionStamp;
-
-		socket.emit("data", currentTime, timeElapsedSincePing, serverTimeElapsedSinceClientConnected);
-	});
-
-	socket.on('playerHitObstacle', (playerName) => {
-		listOfPlayers[playerName].x = listOfPlayers[playerName].x - 5;
-		io.emit('updateusers', playerNames,listOfPlayers);
-
-	});
-
-	socket.on('playerHitLave', (playerName) => {
-		listOfPlayers[playerName].x = listOfPlayers[playerName].x - 5;
-		listOfPlayers[playerName].score= listOfPlayers[playerName].score - 1;
-		io.emit('updateusers', playerNames,listOfPlayers);
-
-	});
-
-	socket.on('playerHitTarget', (playerName) => {
-
-		for (let player in playerNames) {
-			listOfPlayers[player].x=10;
-			listOfPlayers[player].y=10;
-		}
-
-		listOfPlayers[playerName].score= listOfPlayers[playerName].score + 10;
-		io.emit('updateusers', playerNames,listOfPlayers);
-		socket.broadcast.emit('updateusers', playerNames,listOfPlayers);
-		level = level +1 ;
-		if(level>3){ 
-			io.emit('endOfGame',winner(playerName));
-		}else {
-			io.emit('updateLevel', level);
-		}
-	});
-
-	socket.on("getLevel",() => {
-		io.emit('updateLevel', level);
-	});
-
-
-
-	socket.on('getObstaclesAndTarget', () =>{
-		createObstacles();
-		socket.emit("updateObstacleAndTarget",obstacles,laves, target);
-	})
-
-	// when the client emits 'sendchat', this listens and executes
-	socket.on('sendchat', (data) => {
-		// we tell the client to execute 'updatechat' with 2 parameters
-		io.sockets.emit('updatechat', socket.username, data);
-	});
-
-	socket.on('sendpos', (player, delta) => {
-		let username = player.name;
-
-
-		if (listOfPlayers[username] !== undefined) {
-			listOfPlayers[player.name].vitesseX = player.vitesseX;
-			listOfPlayers[player.name].vitesseY = player.vitesseY;
-
-			listOfPlayers[username].x += calcDistanceToMove(delta, listOfPlayers[username].vitesseX);
-			listOfPlayers[username].y += calcDistanceToMove(delta,listOfPlayers[username].vitesseY);
-			let pos = {player: listOfPlayers[username] };
-
-			socket.broadcast.emit('updatepos', pos);
-			socket.broadcast.emit('updatePlayers',listOfPlayers);
-
-		}
-	});
-
-	socket.on("updatePlayers",() => {
-		io.emit('updatePlayers',listOfPlayers);
-	});
-
-	socket.on('adduser', (username) => {
-		socket.username = username;
-		playerNames[username] = username;
-		// echo to the current client that he is connected
-		socket.emit('updatechat', 'SERVER', 'you have connected');
-		// echo to all client except current, that a new person has connected
-		socket.broadcast.emit('updatechat', 'SERVER', username + ' has connected');
-
-		// Create a new player 
-		let player = new Joueur(username);
-		listOfPlayers[username] = player;
-
-		// tell all clients to update the list of users on the GUI
-		io.emit('updateusers', playerNames,listOfPlayers);
-		io.emit('updatePlayers',listOfPlayers);
-	});
-
-	// when the user disconnects.. perform this
-	socket.on('disconnect', () => {
-		// remove the username from global usernames list
-		delete playerNames[socket.username];
-		// update list of users in chat, client-side
-
-		// Remove the player too
-		delete listOfPlayers[socket.username];	
-		
-		io.emit('updateusers', playerNames,listOfPlayers);
-		io.emit('updatePlayers',listOfPlayers);
-
-		// echo globally that this client has left
-		socket.broadcast.emit('updatechat', 'SERVER', socket.username + ' has disconnected');
-	});
-});
-
-
-class Joueur {
-	name;
-	x;
-	y;
-	largeur = 100;
-	hauteur = 100;
-
-	vitesseX;
-	vitesseY;
-
-	color;
-	score;
-
-	sizeX;
-	sizeY;
-  
-	constructor( name) {
-	  this.x = 10;
-	  this.y =  Math.floor(Math.random() * (41 )) + 10;
-	  this.vitesseX=1;
-	  this.vitesseY=1;
-	  let r = Math.floor(Math.random() * (255 - 0 +1 )) + 0;
-	  let g = Math.floor(Math.random() * (255 - 0 +1 )) + 0;
-	  let b = Math.floor(Math.random() * (255 - 0 +1 )) + 0;
-	  this.color = [r,g,b];
-	  this.name = name;
-	  this.score = 0;
-	  this.sizeX = 20;
-	  this.sizeY = 20;
-	}
-	
-	draw(ctx) {
-	  ctx.save();
-	  ctx.translate(this.x, this.y);
-	  ctx.fillStyle = "rgb("+this.color[0]+","+ this.color[1]+"," +this.color[2]+")"; 
-	  ctx.fillRect(this.x, this.y, 10, 10);
-	  ctx.restore();
-	}
-
-	print(){
-		console.log("hello");
-	}
-	changeDirection() {
-	  this.vitesseX = -this.vitesseX;
-	}
-	move() {
-	  this.x+=this.vitesseX;
-	}
-  }
-
-  class Obstacle {
-	  color;
-	  x;
-	  y;
-	  width;
-	  height;
-	  vx;
-	  vy;
-	  range;
-	  max;
-	  min;
-	  constructor( x, y, l, h, c, vy, range, max, min){
-		this.color = c;
-		this.x = x;
-		this.y = y;
-		this.width= l;
-		this.height= h;
-		this.vy = vy;
-		this.range = range;
-		this.max = max ;
-		this.min = min;
-
-	  }
-
-	  
   }
