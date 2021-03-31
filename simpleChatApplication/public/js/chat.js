@@ -17,11 +17,7 @@ function init() {
   data = document.querySelector("#data");
   datasend = document.querySelector("#datasend");
   users = document.querySelector("#users");
-
   Level = document.querySelector("#level");
-
-
-
 
 
   // Listener for send button
@@ -100,6 +96,11 @@ function init() {
   socket.on("ping", () => {
     send("pongo");
   });
+
+  socket.on("receiveABeat", (word) => {
+    console.log(word.allPlayers);
+		socket.emit("heartBeat");
+  })
 
 
   // update the whole list of players, useful when a player
