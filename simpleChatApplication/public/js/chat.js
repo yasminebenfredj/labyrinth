@@ -2,6 +2,9 @@ let username;
 let conversation, data, datasend, users;
 let artificialLatencyDelay=0;
 let socket;
+let nbClientUpdatesPerSeconds = 10;
+
+
 
 // on load of page
 window.onload = init;
@@ -97,10 +100,24 @@ function init() {
     send("pongo");
   });
 
+  //recevois le battement de coeur
   socket.on("receiveABeat", (word) => {
-    console.log(word.allPlayers);
+    listOfPlayers = word.listOfPlayers;
+    //laves = word.laves;
+    //obstacles = word.obstacles;
+    level = word.level;
+    playerNames = word.name;
 		socket.emit("heartBeat");
   })
+
+
+
+	//envoi etat joueur au server
+	setInterval(() => {
+		updateClient();
+	}, 1000/nbClientUpdatesPerSeconds);
+
+
 
 
   // update the whole list of players, useful when a player
@@ -147,7 +164,6 @@ function changeArtificialLatency(value) {
   let spanDelayValue = document.querySelector("#delay");
   spanDelayValue.innerHTML = artificialLatencyDelay;
 }
-
 
 
 

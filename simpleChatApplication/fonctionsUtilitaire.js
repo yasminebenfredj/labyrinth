@@ -15,9 +15,3 @@ exports.calcDistanceToMove = function (delta, speed) {
 	return (speed * delta);
 }
 
-
-exports.sendHeartBeat = function () {
-	let word = new Word(allPlayers, obstacles, laves, level, names);
-	console.log(word.allPlayers);
-	socket.emit("receiveABeat",word);
-}

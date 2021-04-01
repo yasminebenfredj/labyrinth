@@ -14,6 +14,9 @@ class Joueur {
 
 	sizeX;
 	sizeY;
+
+	listOfPosition;
+	latestPos;
   
 	constructor( name) {
 	  this.x = 10;
@@ -28,6 +31,9 @@ class Joueur {
 	  this.score = 0;
 	  this.sizeX = 20;
 	  this.sizeY = 20;
+
+	  this.latestPos = 0;
+	  this.listOfPosition = {}
 	}
 	
 	changeDirection() {

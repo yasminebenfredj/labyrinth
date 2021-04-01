@@ -12,6 +12,10 @@ let obstacleSpeed = 100;
 let obstacles = [];
 let laves = [] ;
 let target={};
+let targetImage;
+let myword = {};
+let lastMe = {x:0, y:0, sizeY:0, sizeY:0, color : [0,0,0]} ;
+
 
 function startGame() {
   console.log("init");
@@ -32,9 +36,28 @@ function startGame() {
 }
 
 function updatePlayerNewPos(newPos) {
+
+  lastMe.x = newPos.player.x;
+  lastMe.y = newPos.player.y;
+  lastMe.sizeY = newPos.player.sizeY;
+  lastMe.sizeX = newPos.player.sizeY;
+  console.log(newPos.player);
+
   allPlayers[newPos.player.name].x = newPos.player.x;
   allPlayers[newPos.player.name].y = newPos.player.y;
 }
+
+
+
+//called every nbClientUpdatesPerSeconds, 
+//that will send its status to the server.
+function updateClient() {
+  if (allPlayers[username] !== undefined) {
+    socket.emit("updateClient", allPlayers[username], delta);
+  }
+}
+
+
 
 
 function drawPlayer(player) {
@@ -55,6 +78,11 @@ function drawAllPlayers() {
   for (let name in allPlayers) {
     drawPlayer(allPlayers[name]);
   }
+  
+  if (lastMe.color !== undefined) {
+    console.log(lastMe);
+    drawPlayer(lastMe);
+  }
 }
 
 
@@ -68,10 +96,14 @@ function moveCurrentPlayer() {
       checkIfPlayerHitObstacles(o,allPlayers[username]);
     });
 
+    checkIfPlayerHitTarget(allPlayers[username]);
 
+    laves.forEach(o => {
+      checkIfPlayerHitLaves(o,allPlayers[username]);
+    });
 
     //deplacer le transfert  dans > ligne 288 
-    socket.emit("sendpos", allPlayers[username], delta);
+    socket.emit("updateClient", allPlayers[username], delta);
   }
 }
 
@@ -136,16 +168,6 @@ function animationLoop(time) {
     drawObstacles();
 
     moveCurrentPlayer();
-
-    checkIfPlayerHitTarget(allPlayers[username]);
-    /*
-    obstacles.forEach(o => {
-      checkIfPlayerHitObstacles(o,allPlayers[username]);
-    });
-*/
-    laves.forEach(o => {
-      checkIfPlayerHitLaves(o,allPlayers[username]);
-    });
   }
 
   // 3 On rappelle la fonction d'animation à 60 im/s
@@ -343,28 +365,10 @@ function processKeyup(event) {
   }
 }
 
-function traiteMouseDown(evt) {
-  console.log("mousedown");
-}
-
-function traiteMouseMove(evt) {
-  console.log("mousemove");
-
-  mousePos = getMousePos(canvas, evt);
-
-  allPlayers[username].x = mousePos.x;
-  allPlayers[username].y = mousePos.y;
-
-  console.log("On envoie sendPos");
-  let pos = { user: username, pos: mousePos };
-  socket.emit("sendpos", pos);
-}
 
 
-function getMousePos(canvas, evt) {
-  var rect = canvas.getBoundingClientRect();
-  return {
-    x: evt.clientX - rect.left,
-    y: evt.clientY - rect.top,
-  };
-}
+
+
+
+
+
