@@ -1,0 +1,67 @@
+<html lang="fr">
+
+<head>
+	<link rel="stylesheet" href="css/styles.css">
+	<script src="/socket.io/socket.io.js"></script>
+	<script src="js/jeu.js"></script>
+	<script src="js/chat.js"></script>
+</head>
+
+<body text="white" bgcolor="black" background="/documents/plan.jpg">
+	<p>
+	<div class="regles">
+		<p>
+			<center><font size="+3"><b>Regle du jeux : </b></font></center>
+			<ul>
+			<li> Vous devez atteindre la cible le plus rapidement possible.</li>
+			<li> Chaque cible vous fait gagner 10 points. </li>
+			<li> Evitez la lave (rectangles Rouge et Orange).</li>
+			<li> La lave diminus votre score.</li>
+			</ul>
+		</p>
+	</div>
+	</p>
+
+	<p>
+	<div class="info">
+		<p>Latence artificielle pour ce client : <span id="delay">0</span> ms</p> 
+		<p>0 <input type="range" value=0 min=0 max=300 oninput="changeArtificialLatency(this.value)"> 300</p>
+
+		<p>Rtt time : <span id="rtt"></span> ms, ping = <span id="ping"></span> ms</p>
+		<p>Temps chez le Server: <span id="serverTime"></span> seconds</p>
+		<p>Temps chez le Client : <span id="clientTime"></span> seconds</p>
+	</div>
+	</p>
+
+
+
+	<p>
+		<canvas tabindex="1" width=1000 height=500 id="myCanvas"></canvas>
+        <div style='display:none;'><img id="targetIm" src="documents/target.png"></div>
+		<p>
+			<div class="level" id="level"></div>
+		</p>
+	</p>
+	<p>
+		<p>
+			<div class="userList">
+				<center><font size="+3.5"><b>Scores des Joueurs   </b></font></center>
+				<p>
+				<div id="users"></div>
+				</p>
+			</div>
+		</p>
+		<p>
+			<div class="chatMessages">
+				<center><font size="+3"><b>Boite de dialogue</b></font></center>
+				<p>
+				<div id="conversation"></div>
+				<input id="data" style="width:300px;height:30px" />
+				<input type="button" id="datasend" value="Envoyer" />
+				</p>
+			</div>
+		</p>
+	</p>
+
+</body>
+</html>

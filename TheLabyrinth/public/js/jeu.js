@@ -14,14 +14,14 @@ let laves = [] ;
 let target={};
 let targetImage;
 let myword = {};
-let lastMe = {x:0, y:0, sizeY:0, sizeY:0, color : [0,0,0]} ;
 
 
 function startGame() {
   console.log("init");
   canvas = document.querySelector("#myCanvas");
   ctx = canvas.getContext("2d");
-  canvas.style = "position: absolute; top: 20%; left: 30%; right: 35%; bottom: 30%; margin: auto; border:2px solid black"; 
+
+  canvas.style = "position: absolute; top: 27%; left: 25%; right: 35%; bottom: 30%; margin: auto; border:5px solid white"; 
 
   // Les écouteurs
   //canvas.addEventListener("mousedown", traiteMouseDown);
@@ -36,12 +36,6 @@ function startGame() {
 }
 
 function updatePlayerNewPos(newPos) {
-
-  lastMe.x = newPos.player.x;
-  lastMe.y = newPos.player.y;
-  lastMe.sizeY = newPos.player.sizeY;
-  lastMe.sizeX = newPos.player.sizeY;
-  console.log(newPos.player);
 
   allPlayers[newPos.player.name].x = newPos.player.x;
   allPlayers[newPos.player.name].y = newPos.player.y;
@@ -64,7 +58,7 @@ function drawPlayer(player) {
   ctx.save();
 
   //ctx.translate(player.x, player.y);
-  ctx.fillStyle = "rgb("+player.color[0]+","+ player.color[1]+"," +player.color[2]+")"; 
+  ctx.fillStyle = player.color; 
   ctx.fillRect(player.x, player.y, player.sizeY, player.sizeY);
 
   ctx.font = '15pt verdana';
@@ -79,10 +73,6 @@ function drawAllPlayers() {
     drawPlayer(allPlayers[name]);
   }
   
-  if (lastMe.color !== undefined) {
-    console.log(lastMe);
-    drawPlayer(lastMe);
-  }
 }
 
 
@@ -119,7 +109,8 @@ function updateUsersScore(playerNames) {
   users.innerHTML = "";
 
   for (let player in playerNames) {
-    let userLineOfHTML = "<div>" + allPlayers[player].name + " : "+allPlayers[player].score +"</div>";
+
+    let userLineOfHTML = "<p style='color:"+allPlayers[player].color+"'><font size='+3' color= > <b>" + allPlayers[player].name + " : "+allPlayers[player].score +"</b></font></p>";
     users.innerHTML += userLineOfHTML;
   }
 }
@@ -130,7 +121,7 @@ function updatelevel(l){
 
   Level.innerHTML = "";
 
-  let txt = "<font size='+10' > Niveau <b>" + level + "</b> </font>" ;
+  let txt = " <b> Niveau " + level + "</b>" ;
   Level.innerHTML += txt;
 }
 
@@ -297,6 +288,7 @@ function checkIfPlayerHitObstacles(obstacle,player) {
   if(player === undefined) return;
   if(RectsOverlap(player.x, player.y, player.sizeX, player.sizeY, obstacle.x, obstacle.y, obstacle.width, obstacle.height)) {
     obstacle.color = "red";
+    //prediction 
     allPlayers[player.name].x -= calcDistanceToMove(delta, allPlayers[player.name].vitesseX)*2;
     allPlayers[player.name].y -= calcDistanceToMove(delta,allPlayers[player.name].vitesseY)*2;
 
@@ -310,8 +302,10 @@ function checkIfPlayerHitLaves(lave,player) {
   if(player === undefined) return;
 
   if(RectsOverlap(player.x, player.y, player.sizeX, player.sizeY, lave.x, lave.y, lave.width, lave.height)) {
-    allPlayers[player.name].x -= calcDistanceToMove(delta, allPlayers[player.name].vitesseX)*6;
-    allPlayers[player.name].y -= calcDistanceToMove(delta,allPlayers[player.name].vitesseY)*6;
+    //prediction 
+    allPlayers[player.name].x -= calcDistanceToMove(delta, allPlayers[player.name].vitesseX)+15;
+    allPlayers[player.name].y -= calcDistanceToMove(delta,allPlayers[player.name].vitesseY);
+
     socket.emit("playerHitLave",player.name, delta);
   } 
 }
@@ -351,15 +345,20 @@ function processKeydown(event) {
 function processKeyup(event) {
   switch (event.key) {
     case "ArrowRight":
-    case "ArrowLeft":
       allPlayers[username].vitesseX = 0;
       socket.emit("pressKey", 4, username);
-
+      break;
+    case "ArrowLeft":
+      allPlayers[username].vitesseX = 0;
+      socket.emit("pressKey", 5, username);
       break;
     case "ArrowUp":
+      allPlayers[username].vitesseY = 0;
+      socket.emit("pressKey", 6, username);
+      break;
     case "ArrowDown":
       allPlayers[username].vitesseY = 0;
-      socket.emit("pressKey", 5, username);
+      socket.emit("pressKey", 7, username);
 
       break;
   }

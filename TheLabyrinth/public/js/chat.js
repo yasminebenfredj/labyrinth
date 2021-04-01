@@ -9,8 +9,10 @@ let nbClientUpdatesPerSeconds = 10;
 // on load of page
 window.onload = init;
 
+
 function init() {
   username = prompt("Quel est votre nom?");
+  alert("BonCourage "+ username);
 
   // initialize socket.io client-side
   socket = io.connect();
@@ -63,8 +65,8 @@ function init() {
   });
 
   // listener, whenever the server emits 'updatechat', this updates the chat body
-  socket.on("updatechat", (username, data) => {
-    let chatMessage = "<font size='+1'> <b>" + username + ":</b> </font>" + data + "<br>";
+  socket.on("updatechat", (username,color, data) => {
+    let chatMessage = "<p style='color:"+color+"'><font size='+1'> <b>" + username + ":</b> " + data + "<br></font></p>";
     conversation.innerHTML += chatMessage;
   });
 
@@ -105,7 +107,7 @@ function init() {
     listOfPlayers = word.listOfPlayers;
     //laves = word.laves;
     //obstacles = word.obstacles;
-    level = word.level;
+    //level = word.level;
     playerNames = word.name;
 		socket.emit("heartBeat");
   })

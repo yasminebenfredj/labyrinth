@@ -1,0 +1,84 @@
+#myCanvas {
+  position: absolute;
+
+    border: 5px solid white;
+    background-color:rgb(140, 85, 117);
+    border-radius: 1%;
+    opacity: 0.9;
+
+  }
+
+  .userList {
+    background-color:rgba(154, 116, 181, 0.7);
+
+    width:350px;
+    border-left:5px solid white;
+    padding:10px;
+    overflow:scroll-y;
+    position: absolute;
+    top: 10px;
+    font-size: larger;
+    margin-left: 3%;
+    margin-top: 20%;
+
+  }
+
+  .chatMessages {
+    background-color:rgba(200, 200, 200, 0.6);
+    width:400px;
+    height:350px;
+    overflow:scroll-y;
+    padding:10px;
+    position: absolute;
+    top: 10px;
+    margin-left: 77%;
+    margin-top: 20%;
+    overflow-y: scroll;
+  }
+
+  .level {
+    background-color:rgba(0,0,0, 0.9);
+
+    width:300px;
+    height:80px;
+    float:left;
+    position: absolute;
+    padding:40px;
+    margin-left: 40%;
+    color: #b52b8b;
+    text-align: center;
+    font-size:500%;
+    border-radius: 5%;
+
+  }
+
+  .info {
+    position: absolute;
+    width:300px;
+    height:200px;
+    border-right:2px solid white;
+    border-left:2px solid white;
+    border-top:2px solid white;
+    border-bottom:2px solid white;
+    text-align: center;
+    margin-left: 80%;
+    margin-top: 5%;
+
+
+  }
+
+  .regles {
+    position: absolute;
+    background-color:rgb(240, 183, 216, 0.7);
+    width:450px;
+    height:200px;
+    border-right:2px solid white;
+    border-left:2px solid white;
+    border-top:2px solid white;
+    border-bottom:2px solid white;
+    font-size: larger;
+    padding:10px;
+    margin-top: 5%;
+    margin-left: 0.5%;
+
+  }
